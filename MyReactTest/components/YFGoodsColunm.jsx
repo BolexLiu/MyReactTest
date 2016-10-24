@@ -2,17 +2,22 @@
  * 商品列表
  */
 var GoodsColumnListView = React.createClass({
-
+    propTypes: {
+        colunmType: React.PropTypes.number.isRequired,
+        imgUrlHead: React.PropTypes.string.isRequired,
+    },
     getInitialState: function () {
         return {
             goodsList: [
                 {
+                    time: "2016/10/18 17:14",
                     goodsCode: "6013464",
                     goodsTitle: "三九感冒",
                     goodsprice: "8.00",
                     amount: 2,
                 },
                 {
+                    time: "2016/10/18 17:14",
                     goodsCode: "200275",
                     goodsTitle: "三鹿奶粉",
                     goodsprice: "10.00",
@@ -20,6 +25,7 @@ var GoodsColumnListView = React.createClass({
                 },
 
                 {
+                    time: "2016/10/18 17:14",
                     goodsCode: "003",
                     goodsTitle: "三聚氰胺",
                     goodsprice: "1.01",
@@ -27,6 +33,7 @@ var GoodsColumnListView = React.createClass({
 
                 },
                 {
+                    time: "2016/10/18 17:14",
                     goodsCode: "004",
                     goodsTitle: "双氧水",
                     goodsprice: "12.10",
@@ -35,13 +42,9 @@ var GoodsColumnListView = React.createClass({
                 }],
         }
     },
-    componentWillMount(){
-        console.log("componentWillMount");
-
-    },
     changeHandle: function (i) {
         this.setState({
-            goodsList: this.state.goodsList.map( (item)=> {
+            goodsList: this.state.goodsList.map((item)=> {
                 if (item.goodsCode === i) {
                     ++item.amount
                     return item
@@ -51,13 +54,10 @@ var GoodsColumnListView = React.createClass({
         })
     },
     render: function () {
-        var listViewStyle = {
-            padding: "0px",
-        };
         var colunmType = this.props.colunmType;
         var imgUrlHead = this.props.imgUrlHead;
         console.log(this.state.goodsList)
-        return <ul style={listViewStyle}>{
+        return <ul className="listViewStyle">{
             this.state.goodsList.map((goodsItem)=> {
                 return <GoodsColumnView onChangeCallBack={this.changeHandle} colunmType={colunmType}
                                         goodsItem={goodsItem} key={goodsItem.goodsCode}
@@ -67,7 +67,6 @@ var GoodsColumnListView = React.createClass({
         </ul>
     }
 })
-
 /**
  *商品列组件
  */
@@ -83,47 +82,12 @@ var GoodsColumnView = React.createClass({
         render: function () {
             var colunmType = this.props.colunmType;
             var imgurl = this.props.imgUrlHead + this.props.goodsItem.goodsCode + "/" + this.props.goodsItem.goodsCode + ".JPG";
-            var titleStyle = {
-                color: "#444",
-                fontSize: "20px",
-                verticalAlign: "middle",
-                lineHeight: "100px",
-                justifyContent: "center ",
-            };
-            var goodsImgStyle = {
-                padding: "10px",
-                height: "100px",
-                width: "100px",
-            };
-            var parentHStyle = {
-                display: "flex",
-                flexDirection: "row",
-
-            }
-            var parentVStyle = {
-                display: "flex",
-                flexDirection: "column",
-
-            }
-            var divParentStyle = {
-                width: "100%",
-                display: "flex",
-                justifyContent: "flex-start ",
-                borderBottomStyle: "solid",
-                borderBottomColor: "#1333",
-                borderWidth: "1px",
-            }
-            var divCenterStyle = {
-                width: "100%",
-                display: "flex",
-                justifyContent: "flex-start ",
-            }
             return (
-                <div style={Object.assign({}, parentHStyle, divParentStyle)} onClick={this.goodsDetails}>
-                    <img style={goodsImgStyle} src={imgurl}/>
-                    <div style={Object.assign({}, parentVStyle, divCenterStyle)}>
-                        <a style={titleStyle}>{this.props.goodsItem.goodsTitle}</a>
-                        <PriceAmountView colunmType={colunmType} goodsItem={this.props.goodsItem}/>
+                <div className="divParent" onClick={this.goodsDetails}>
+                    <img className="goodsImg" src={imgurl}/>
+                    <div className="goodsLeft">
+                        <a className="title">{this.props.goodsItem.goodsTitle}</a>
+                        <ShopInformationView colunmType={colunmType} goodsItem={this.props.goodsItem}/>
                     </div>
                 </div>
             )
@@ -132,47 +96,61 @@ var GoodsColumnView = React.createClass({
 );
 /**
  *
- * 价格和数量组件
+ * 价格+数量/申请时间父容器组件
  */
-var PriceAmountView = React.createClass({
+var ShopInformationView = React.createClass({
     render: function () {
-        var Price = [];
+        var inView = [];
         var colunmType = this.props.colunmType;
-        var parentHStyle = {
-            display: "flex",
-            flexDirection: "row",
-        }
         if (colunmType !== 0) {
-            Price.push(<a key={this.props.goodsItem.goodsprice + 1}
-                          style={{color: "red", fontSize: "24px",}}>￥{this.props.goodsItem.goodsprice}</a>);
-            if (colunmType === 1) {
-                Price.push(<a key={this.props.goodsItem.goodsprice + 2} style={{
-                    color: "#888",
-                    fontSize: "18px",
-                    paddingLeft: "100px"
-                }}>数量:{this.props.goodsItem.amount}</a>);
-            } else if (colunmType === 2) {
-                Price.push(<a key={this.props.goodsItem.goodsprice + 2} style={{
-                    color: "#888",
-                    fontSize: "18px",
-                    paddingLeft: "100px"
-                }}>X{this.props.goodsItem.amount}</a>);
+            if (colunmType === 3) {
+                inView.push(< ApplyTimeView key={this.props.goodsItem.goodsCode + colunmType}
+                                            time={this.props.goodsItem.time}/>);
+            } else {
+                inView.push(< PriceAmountView key={this.props.goodsItem.goodsCode + colunmType}
+                                              goodsItem={this.props.goodsItem } colunmType={colunmType}/>);
             }
         }
-        return (  <div style={Object.assign({alignItems: "center", justifyContent: "flex-start ",}, parentHStyle)}>
-            {Price}
+        return (  <div >
+            {inView}
         </div>  )
-
     }
-
 })
-
-
+/**
+ * 申请时间
+ */
+function ApplyTimeView(props) {
+    return <div>
+        申请时间: {props.time}
+    </div>;
+}
+/**
+ * 价格和数量
+ */
+const PriceAmountView = (props)=> {
+    var colunmType = props.colunmType;
+    var Price = [];
+    Price.push(<a key={props.goodsItem.goodsCode + 0}
+                  className="Price">￥{props.goodsItem.goodsprice}</a>);
+    if (colunmType === 1) {
+        Price.push(<a key={props.goodsItem.goodsCode + 1}
+                      className="Amount">数量:{props.goodsItem.amount}</a>);
+    } else if (colunmType === 2) {
+        Price.push(<a key={props.goodsItem.goodsCode + 2}
+                      className="Amount">X{props.goodsItem.amount}</a>);
+    }
+    return <div className="PriceAmount">
+        {Price}
+    </div>;
+};
 var imgUrlHead = 'http://yf-base.oss-cn-shenzhen.aliyuncs.com/product/';
-
+var myProps = {
+    colunmType: 2,
+    imgUrlHead: imgUrlHead,
+}
 
 ReactDOM.render(
     <div>
-        <GoodsColumnListView colunmType={1} imgUrlHead={imgUrlHead}/>
+        <GoodsColumnListView {...myProps} />
     </div>
     , document.getElementById("container"));
