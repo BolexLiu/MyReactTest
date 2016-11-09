@@ -1,0 +1,10 @@
+/*图片*/
+.goodsImg{
+    padding: 10px;
+    height: 100px;
+    width: 100px;
+}
+
+.goodsImgborder{
+    border:1px solid #8a8a8a;
+}

@@ -1,9 +1,9 @@
 /**
  * 商品列表
  */
-var GoodsColumnListView = React.createClass({
+var GoodsRowListView = React.createClass({
     propTypes: {
-        colunmType: React.PropTypes.number.isRequired,
+        RowType: React.PropTypes.number.isRequired,
         imgUrlHead: React.PropTypes.string.isRequired,
     },
     getInitialState: function () {
@@ -54,14 +54,14 @@ var GoodsColumnListView = React.createClass({
         })
     },
     render: function () {
-        var colunmType = this.props.colunmType;
+        var RowType = this.props.RowType;
         var imgUrlHead = this.props.imgUrlHead;
         console.log(this.state.goodsList)
         return <ul className="listViewStyle">{
             this.state.goodsList.map((goodsItem)=> {
-                return <GoodsColumnView onChangeCallBack={this.changeHandle} colunmType={colunmType}
-                                        goodsItem={goodsItem} key={goodsItem.goodsCode}
-                                        imgUrlHead={imgUrlHead}/>
+                return <GoodsRowView onChangeCallBack={this.changeHandle} RowType={RowType}
+                                     goodsItem={goodsItem} key={goodsItem.goodsCode}
+                                     imgUrlHead={imgUrlHead}/>
             })
         }
         </ul>
@@ -70,49 +70,69 @@ var GoodsColumnListView = React.createClass({
 /**
  *商品列组件
  */
-var GoodsColumnView = React.createClass({
+var GoodsRowView = React.createClass({
         goodsDetails: function (event) {
             this.props.onChangeCallBack(this.props.goodsItem.goodsCode)
         },
-        getDefaultProps: function () {
-            return {
-                imgUrlHead: 'http://yf-base.oss-cn-shenzhen.aliyuncs.com/product/'
-            };
-        },
         render: function () {
-            var colunmType = this.props.colunmType;
-            var imgurl = this.props.imgUrlHead + this.props.goodsItem.goodsCode + "/" + this.props.goodsItem.goodsCode + ".JPG";
+            var RowType = this.props.RowType;
+
+            var inView = [];
+            /**
+             * 判断加载的类型
+             */
+            if (RowType !== 0) {
+                if (RowType === 3) {
+                    inView.push(< ApplyTimeView key={this.props.goodsItem.goodsCode + RowType}
+                                                time={this.props.goodsItem.time}/>);
+                } else {
+                    inView.push(< PriceAmountView key={this.props.goodsItem.goodsCode + RowType}
+                                                  goodsItem={this.props.goodsItem } RowType={RowType}/>);
+                }
+            }
             return (
                 <div className="divParent" onClick={this.goodsDetails}>
-                    <img className="goodsImg" src={imgurl}/>
+                    <YFimg  imgUrlHead={this.props.imgUrlHead} goodsCode={this.props.goodsItem.goodsCode}/>
                     <div className="goodsLeft">
                         <a className="title">{this.props.goodsItem.goodsTitle}</a>
-                        <ShopInformationView colunmType={colunmType} goodsItem={this.props.goodsItem}/>
+                        <ShopInformationView RowType={RowType} goodsItem={this.props.goodsItem}>
+                            {inView}
+                        </ShopInformationView>
                     </div>
                 </div>
             )
         }
     }
 );
+
+
+/**
+ * 益丰图片
+ */
+var YFimg = React.createClass({
+    getDefaultProps: function () {
+        return {
+            imgUrlHead: 'http://yf-base.oss-cn-shenzhen.aliyuncs.com/product/'
+        };
+    },
+    render: function () {
+        let imgurl = this.props.imgUrlHead + this.props.goodsCode + "/" + this.props.goodsCode + ".JPG";
+        return <img className="goodsImg" src={imgurl}/>
+    }
+});
+
+
 /**
  *
  * 价格+数量/申请时间父容器组件
  */
 var ShopInformationView = React.createClass({
     render: function () {
-        var inView = [];
-        var colunmType = this.props.colunmType;
-        if (colunmType !== 0) {
-            if (colunmType === 3) {
-                inView.push(< ApplyTimeView key={this.props.goodsItem.goodsCode + colunmType}
-                                            time={this.props.goodsItem.time}/>);
-            } else {
-                inView.push(< PriceAmountView key={this.props.goodsItem.goodsCode + colunmType}
-                                              goodsItem={this.props.goodsItem } colunmType={colunmType}/>);
-            }
+        return (  <div >{
+            React.Children.map(this.props.children, function (child) {
+                return <div>{child}</div>;
+            })
         }
-        return (  <div >
-            {inView}
         </div>  )
     }
 })
@@ -128,14 +148,14 @@ function ApplyTimeView(props) {
  * 价格和数量
  */
 const PriceAmountView = (props)=> {
-    var colunmType = props.colunmType;
+    var RowType = props.RowType;
     var Price = [];
     Price.push(<a key={props.goodsItem.goodsCode + 0}
                   className="Price">￥{props.goodsItem.goodsprice}</a>);
-    if (colunmType === 1) {
+    if (RowType === 1) {
         Price.push(<a key={props.goodsItem.goodsCode + 1}
                       className="Amount">数量:{props.goodsItem.amount}</a>);
-    } else if (colunmType === 2) {
+    } else if (RowType === 2) {
         Price.push(<a key={props.goodsItem.goodsCode + 2}
                       className="Amount">X{props.goodsItem.amount}</a>);
     }
@@ -143,14 +163,17 @@ const PriceAmountView = (props)=> {
         {Price}
     </div>;
 };
+
+
 var imgUrlHead = 'http://yf-base.oss-cn-shenzhen.aliyuncs.com/product/';
 var myProps = {
-    colunmType: 2,
+    RowType: 2,
     imgUrlHead: imgUrlHead,
 }
 
 ReactDOM.render(
     <div>
-        <GoodsColumnListView {...myProps} />
+        <GoodsRowListView {...myProps} />
+
     </div>
     , document.getElementById("container"));

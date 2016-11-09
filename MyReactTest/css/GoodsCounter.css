@@ -1,0 +1,31 @@
+/*水平布局*/
+.counterParint {
+    display: flex;
+    flex-direction: row;
+}
+
+.counterOperationRight {
+    width: 25px;
+    border-bottom-right-radius: 45px;
+    border-top-right-radius: 45px;
+    border-color: #cdcdcd;
+    background-color: #ffffff;
+    font-size: 15px;
+}
+
+.counterOperationLeft {
+    width: 25px;
+    border-bottom-left-radius: 45px;
+    background-color: #ffffff;
+    border-color: #cdcdcd;
+    border-top-left-radius: 45px;
+    font-size: 15px;
+}
+
+.counterInput {
+
+    text-align: center;
+    width: 50px;
+    background-color: #ffffff;
+    height: 30px;
+}

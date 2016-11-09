@@ -1,0 +1,28 @@
+/*数量价格容器*/
+.PriceAmount,.titleDiv {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.PriceAmount{
+    display: flex;
+    flex-direction: row;
+}
+.PriceAmountVertical{
+    display: flex;
+    flex-direction: column;
+}
+
+
+/*价格*/
+.Price {
+    color: red;
+    font-size: 24px;
+}
+/*数量*/
+.Amount {
+    color: #888;
+    font-size: 18px;
+    margin-left: 50px;
+}
